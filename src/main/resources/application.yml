@@ -1,0 +1,12 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${auth0.domain}/
+
+auth0:
+  domain: myapp.us.auth0.com
+  client-id: myappclientid
+  client-secret: myappclientsecret
+  management-api-id: https://${auth0.domain}/api/v2/
