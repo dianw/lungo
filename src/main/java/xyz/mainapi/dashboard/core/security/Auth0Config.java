@@ -37,8 +37,8 @@ public class Auth0Config {
     @Bean
     public ManagementAPI managementAPI(AuthAPI authAPI) throws InterruptedException {
         ManagementAPIHolder managementAPIHolder = new ManagementAPIHolder(authAPI, managementApiId, domain);
-        while (managementAPIHolder.getManagementAPI() == null) {
-            Thread.sleep(100);
+        for (int i = 0; i < 10 && managementAPIHolder.getManagementAPI() == null; i++) {
+            Thread.sleep(200);
         }
         return managementAPIHolder.getManagementAPI();
     }
@@ -86,7 +86,7 @@ public class Auth0Config {
             TokenHolder tokenHolder = tokenRequest.execute();
             ManagementAPI managementAPI = new ManagementAPI(domain, tokenHolder.getAccessToken());
             managementAPIReference.set(managementAPI);
-            logger.info("Management API refreshed [{}]", tokenHolder.getAccessToken());
+            logger.info("Management API refreshed");
         }
 
         private ManagementAPI getManagementAPI() {
