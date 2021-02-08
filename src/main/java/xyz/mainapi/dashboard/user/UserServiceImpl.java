@@ -1,39 +1,38 @@
 package xyz.mainapi.dashboard.user;
 
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.auth0.client.mgmt.ManagementAPI;
-import com.auth0.client.mgmt.filter.UserFilter;
+import com.auth0.exception.Auth0Exception;
 
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 import xyz.mainapi.dashboard.core.security.User;
 
 @Service
 class UserServiceImpl implements UserService {
     private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
-    private final Cache userCache;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ManagementAPI managementAPI;
 
-    public UserServiceImpl(CacheManager cacheManager, ManagementAPI managementAPI) {
-        this.userCache = cacheManager.getCache("user");
+    public UserServiceImpl(ManagementAPI managementAPI) {
         this.managementAPI = managementAPI;
     }
 
     @Override
-    public Mono<User> getCurrentUser(Authentication authentication) {
-        // return from cache if present
-        return Mono.justOrEmpty(userCache.get(authentication.getName(), User.class))
-                // fetch from auth0 if absent
-                .switchIfEmpty(Mono
-                        .fromCallable(() -> managementAPI.users().get(authentication.getName(), new UserFilter()).execute())
-                        .map(USER_MAPPER::toUser)
-                        .subscribeOn(Schedulers.boundedElastic())
-                )
-                // put to cache
-                .doOnNext(user -> userCache.put(authentication.getName(), user));
+    @Cacheable(cacheNames = "user", key = "#authentication.name")
+    public Optional<User> getCurrentUser(Authentication authentication) {
+        try {
+            return Optional.of(managementAPI.users().get(authentication.getName(), null).execute())
+                    .map(USER_MAPPER::toUser);
+        } catch (Auth0Exception e) {
+            logger.warn(e.getMessage(), e);
+            return Optional.empty();
+        }
     }
 }

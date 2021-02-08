@@ -1,11 +1,11 @@
 package xyz.mainapi.dashboard.user;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import reactor.core.publisher.Mono;
 import xyz.mainapi.dashboard.core.security.User;
 
 @RestController
@@ -18,7 +18,9 @@ public class UserRestController {
     }
 
     @GetMapping
-    public Mono<User> currentUser(Authentication authentication) {
-        return userService.getCurrentUser(authentication);
+    public ResponseEntity<User> currentUser(Authentication authentication) {
+        return userService.getCurrentUser(authentication)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
