@@ -1,0 +1,32 @@
+dist: xenial
+language: java
+jdk:
+- openjdk8
+services:
+- docker
+script:
+- mvn clean jacoco:prepare-agent install
+- export JAVA_HOME=/usr/local/lib/jvm/openjdk11
+- mvn sonar:sonar
+- export JAVA_HOME=/usr/local/lib/jvm/openjdk8
+after_success:
+- bash <(curl -s https://codecov.io/bash)
+deploy:
+  # push docker image to docker hub
+  - provider: script
+    skip_cleanup: true
+    script: >-
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker build -t $DOCKER_IMAGE .;
+      docker tag $DOCKER_IMAGE $DOCKER_IMAGE:$DOCKER_TAG;
+      docker push $DOCKER_IMAGE;
+    on:
+      branch: master
+addons:
+  # analyze code
+  sonarcloud:
+    organization: mainapi
+env:
+  global:
+  - DOCKER_IMAGE=mainapi/dashboard
+  - DOCKER_TAG=0.0.1
