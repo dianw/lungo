@@ -12,6 +12,7 @@
 	<properties>
 		<!-- Lib  -->
 		<auth0.version>1.26.0</auth0.version>
+		<junit-jupiter.version>5.7.0</junit-jupiter.version>
 		<okhttp.version>4.9.0</okhttp.version>
 		<spotbugs.version>4.2.0</spotbugs.version>
 		<spring-boot.version>2.4.2</spring-boot.version>
@@ -21,6 +22,7 @@
 		<jacoco.version>0.8.6</jacoco.version>
 		<mapstruct.version>1.4.1.Final</mapstruct.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
 		<java.version>1.8</java.version>
 	</properties>
@@ -109,11 +111,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -184,6 +181,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>${junit-jupiter.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
