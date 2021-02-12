@@ -24,7 +24,7 @@ public class CacheConfig {
 
     private List<Cache> createConcurrentMapCaches(String... cacheNames) {
         return Stream.of(cacheNames)
-                .map(ConcurrentMapCache::new)
-                .collect(Collectors.toList());
+            .map(ConcurrentMapCache::new)
+            .collect(Collectors.toList());
     }
 }

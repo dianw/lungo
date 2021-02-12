@@ -1,8 +1,9 @@
 package xyz.mainapi.dashboard.core.data;
 
+import org.immutables.value.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,36 +16,30 @@ import com.auth0.net.TokenRequest;
 
 @Configuration
 public class Auth0Config {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Value("${auth0.domain}")
-    private String domain;
-    @Value("${auth0.client-id}")
-    private String clientId;
-    @Value("${auth0.client-secret}")
-    private String clientSecret;
-    @Value("${auth0.management-api-id}")
-    private String managementApiId;
-    @Value("${auth0.logging-enabled:false}")
-    private boolean loggingEnabled;
 
     @Bean
-    public AuthAPI authAPI() {
-        AuthAPI authAPI = new AuthAPI(domain, clientId, clientSecret);
-        authAPI.setLoggingEnabled(loggingEnabled);
+    public AuthAPI authAPI(Auth0ConfigProperties props) {
+        AuthAPI authAPI = new AuthAPI(props.getDomain(), props.getClientId(), props.getClientSecret());
+        authAPI.setLoggingEnabled(props.getLoggingEnabled());
         return authAPI;
     }
 
     @Bean
-    public ManagementAPI managementAPI(AuthAPI authAPI) {
-        ManagementAPI managementAPI = new ManagementAPI(domain, "");
-        managementAPI.setLoggingEnabled(loggingEnabled);
+    public ManagementAPI managementAPI(Auth0ConfigProperties props) {
+        ManagementAPI managementAPI = new ManagementAPI(props.getDomain(), "");
+        managementAPI.setLoggingEnabled(props.getLoggingEnabled());
         return managementAPI;
     }
 
     @Bean
-    public ScheduleRenewAccessToken scheduleRenewAccessToken(AuthAPI authApi, ManagementAPI managementApi) {
-        return new ScheduleRenewAccessToken(authApi, managementApi, managementApiId);
+    public ScheduleRenewAccessToken scheduleRenewAccessToken(AuthAPI authApi, ManagementAPI managementApi, Auth0ConfigProperties props) {
+        return new ScheduleRenewAccessToken(authApi, managementApi, props.getManagementApiId());
+    }
+
+    @Bean
+    @ConfigurationProperties("auth0")
+    public Auth0ConfigProperties auth0ConfigProperties() {
+        return ModifiableAuth0ConfigProperties.create();
     }
 
     /**
@@ -70,6 +65,22 @@ public class Auth0Config {
             TokenHolder tokenHolder = tokenRequest.execute();
             managementApi.setApiToken(tokenHolder.getAccessToken());
             logger.info("Management API refreshed");
+        }
+    }
+
+    @Value.Modifiable
+    interface Auth0ConfigProperties {
+        String getDomain();
+
+        String getClientId();
+
+        String getClientSecret();
+
+        String getManagementApiId();
+
+        @Value.Default
+        default boolean getLoggingEnabled() {
+            return false;
         }
     }
 }

@@ -15,7 +15,9 @@ import com.auth0.json.mgmt.users.User;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "pictureUrl", source = "picture")
+    String PROPS_USER_METADATA_PICTURE_URL = "pictureUrl";
+
+    @Mapping(target = "pictureUrl", expression = "java(getPictureUrl(user))")
     UserData toUserData(User user);
 
     @Mapping(target = "ip", expression = "java(logEvent.getIP())")
@@ -25,15 +27,21 @@ public interface UserMapper {
 
     default UserLocationInfoData toUserLocationInfo(Map<String, Object> locationInfo) {
         return Optional.ofNullable(locationInfo)
-                .map(map -> ImmutableUserLocationInfoData.builder()
-                        .cityName((String) map.get("city_name"))
-                        .continentCode((String) map.get("continent_name"))
-                        .countryCode((String) map.get("country_code"))
-                        .countryName((String) map.get("country_name"))
-                        .timeZone((String) map.get("time_zone"))
-                        .latitude((Double) map.get("latitude"))
-                        .longitude((Double) map.get("longitude"))
-                        .build())
-                .orElse(null);
+            .map(map -> ImmutableUserLocationInfoData.builder()
+                .cityName((String) map.get("city_name"))
+                .continentCode((String) map.get("continent_name"))
+                .countryCode((String) map.get("country_code"))
+                .countryName((String) map.get("country_name"))
+                .timeZone((String) map.get("time_zone"))
+                .latitude((Double) map.get("latitude"))
+                .longitude((Double) map.get("longitude"))
+                .build())
+            .orElse(null);
+    }
+
+    default String getPictureUrl(User user) {
+        return Optional.ofNullable(user.getUserMetadata())
+            .map(map -> (String) map.get(PROPS_USER_METADATA_PICTURE_URL))
+            .orElse(user.getPicture());
     }
 }

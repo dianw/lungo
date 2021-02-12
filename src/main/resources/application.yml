@@ -10,3 +10,8 @@ auth0:
   client-id: myappclientid
   client-secret: myappclientsecret
   management-api-id: https://${auth0.domain}/api/v2/
+
+minio:
+  endpoint: https://s3.myapp.com
+  access-key: s3accesskey
+  secret-key: s3secretkey

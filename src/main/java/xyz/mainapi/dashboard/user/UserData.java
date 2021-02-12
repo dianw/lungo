@@ -11,5 +11,4 @@ import xyz.mainapi.dashboard.core.security.User;
 @Value.Immutable
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface UserData extends User, Serializable {
-
 }

@@ -16,11 +16,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,7 +84,41 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(events), false));
 
-        verify(jwtDecoder).decode(eq(jwt.getTokenValue()));
+        verify(jwtDecoder).decode(jwt.getTokenValue());
         verify(userService).getUserLogEvents(any(), any());
+    }
+
+    @Test
+    void testUpdateUserPicture() throws Exception {
+        mockMvc.perform(put("/api/users/me/picture")
+            .contentType("image/jpg")
+            .content(new byte[5]))
+            .andExpect(status().isUnauthorized());
+
+        Jwt jwt = Jwt.withTokenValue("token")
+            .header("alg", "none")
+            .claim("sub", "user123")
+            .build();
+
+        UserData userData = ImmutableUserData.builder().id("123").build();
+
+        when(jwtDecoder.decode(anyString())).thenReturn(jwt);
+        when(userService.updateCurrentUserPicture(any(), any(), anyString(), anyLong()))
+            .thenReturn(userData);
+
+        mockMvc.perform(put("/api/users/me/picture")
+            .header("Authorization", "Bearer " + jwt.getTokenValue())
+            .contentType("text/plain"))
+            .andExpect(status().isUnsupportedMediaType());
+
+        mockMvc.perform(put("/api/users/me/picture")
+            .header("Authorization", "Bearer " + jwt.getTokenValue())
+            .contentType("image/jpg")
+            .content(new byte[0]))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(userData), false));
+
+        verify(jwtDecoder, atLeastOnce()).decode(jwt.getTokenValue());
+        verify(userService).updateCurrentUserPicture(any(), any(), anyString(), anyLong());
     }
 }
