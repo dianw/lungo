@@ -93,10 +93,10 @@ class UserServiceTest {
 
         when(authentication.getName()).thenReturn("test");
         Page<UserLogEventData> logs = userService.getUserLogEvents(authentication, PageRequest.of(0, 5));
-        assertThat(logs).isNotNull();
-        assertThat(logs).isNotEmpty();
-        assertThat(logs).hasSize(1);
-        assertThat(logs).first().hasFieldOrPropertyWithValue("id", "test");
+        assertThat(logs).isNotNull()
+            .isNotEmpty()
+            .hasSize(1)
+            .first().hasFieldOrPropertyWithValue("id", "test");
         assertThat(logs.iterator().next().getLocationInfo()).hasFieldOrPropertyWithValue("countryName", "Indonesia");
         verify(authentication).getName();
 
