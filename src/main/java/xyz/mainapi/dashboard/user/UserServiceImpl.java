@@ -93,7 +93,7 @@ class UserServiceImpl implements UserService {
         // update user, put the picture url in userMetadata
         User user = new User();
         user.setUserMetadata(Collections.singletonMap(UserMapper.PROPS_USER_METADATA_PICTURE_URL, pictureUrl));
-        User updatedUser = managementAPI.users().update(username, user).execute();
+        User updatedUser = managementAPI.users().update(authentication.getName(), user).execute();
 
         return USER_MAPPER.toUserData(updatedUser);
     }
