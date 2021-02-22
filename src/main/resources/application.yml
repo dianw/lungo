@@ -1,9 +1,18 @@
+logging:
+  level:
+    xyz.mainapi: INFO
+
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://${auth0.domain}/
+
+management:
+  info:
+    git:
+      mode: full
 
 auth0:
   domain: myapp.us.auth0.com
