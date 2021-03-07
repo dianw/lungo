@@ -17,6 +17,7 @@
         <okhttp.version>4.9.0</okhttp.version>
         <spotbugs.version>4.2.0</spotbugs.version>
         <spring-boot.version>2.4.2</spring-boot.version>
+        <springdoc.version>1.5.5</springdoc.version>
 
         <!-- Plugins -->
         <git-commit-id-plugin.version>3.0.1</git-commit-id-plugin.version>
@@ -48,6 +49,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-data-rest</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <!-- Monitoring -->

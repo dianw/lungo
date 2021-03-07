@@ -28,6 +28,12 @@ spring:
         jwt:
           issuer-uri: https://${auth0.domain}/
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /api-docs/ui
+
 management:
   info:
     git:
