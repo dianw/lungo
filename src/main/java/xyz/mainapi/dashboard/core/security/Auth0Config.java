@@ -1,4 +1,4 @@
-package xyz.mainapi.dashboard.core.data;
+package xyz.mainapi.dashboard.core.security;
 
 import org.immutables.value.Value;
 import org.slf4j.Logger;
