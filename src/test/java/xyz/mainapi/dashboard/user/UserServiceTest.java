@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,11 +120,13 @@ class UserServiceTest {
         when(authentication.getName()).thenReturn("test");
         when(minioClient.putObject(any()))
             .thenReturn(new ObjectWriteResponse(null, "bucket", "region", "object", "etag", "version"));
+        when(flakeIdGenerator.newId()).thenReturn(new Random().nextLong());
         UserData user = userService.updateCurrentUserPicture(authentication, new ByteArrayInputStream(new byte[0]), "image/png", 0);
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo("123");
         verify(minioConfigProperties).getEndpoint();
         verify(authentication).getName();
         verify(minioClient).putObject(any());
+        verify(flakeIdGenerator).newId();
     }
 }

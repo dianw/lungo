@@ -75,7 +75,8 @@ class UserServiceImpl implements UserService {
     @Override
     @CacheEvict(cacheNames = "user", key = "#authentication.name")
     public UserData updateCurrentUserPicture(Authentication authentication, InputStream picture, String contentType, long size) throws Exception {
-        String username = encoder.encodeToString(authentication.getName().getBytes(StandardCharsets.UTF_8));
+        String authName = authentication.getName();
+        String username = encoder.encodeToString(authName.getBytes(StandardCharsets.UTF_8));
         String imageObjectName = username + "/" + Long.toHexString(flakeIdGenerator.newId());
 
         // upload picture to S3
@@ -93,7 +94,7 @@ class UserServiceImpl implements UserService {
         // update user, put the picture url in userMetadata
         User user = new User();
         user.setUserMetadata(Collections.singletonMap(UserMapper.PROPS_USER_METADATA_PICTURE_URL, pictureUrl));
-        User updatedUser = managementAPI.users().update(authentication.getName(), user).execute();
+        User updatedUser = managementAPI.users().update(authName, user).execute();
 
         return USER_MAPPER.toUserData(updatedUser);
     }
