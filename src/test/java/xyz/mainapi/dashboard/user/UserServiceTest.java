@@ -21,6 +21,7 @@ import com.auth0.client.mgmt.ManagementAPI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hazelcast.flakeidgen.FlakeIdGenerator;
 
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
@@ -43,6 +44,8 @@ class UserServiceTest {
 	private MinioClient minioClient;
     @Mock
     private MinioConfigProperties minioConfigProperties;
+    @Mock
+    private FlakeIdGenerator flakeIdGenerator;
 
     @Spy
     private final ManagementAPI managementAPI = new ManagementAPI("mainapi.xyz", "");
@@ -51,7 +54,7 @@ class UserServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        userService = new UserServiceImpl(managementAPI, minioClient, minioConfigProperties);
+        userService = new UserServiceImpl(managementAPI, minioClient, minioConfigProperties, flakeIdGenerator);
     }
 
     @Test

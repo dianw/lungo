@@ -1,0 +1,27 @@
+## contains dependencies needed to run the project
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb
+    ports:
+      - 3307:3306 # tcp://localhost:3307
+    environment:
+      MYSQL_DATABASE: dashboard
+      MYSQL_USER: dashboard
+      MYSQL_PASSWORD: dashboard
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+    volumes:
+      - ~/.docker-volumes/mysql:/var/lib/mysql # bind local directory to container's mysql data directory
+
+  minio:
+    image: minio/minio
+    ports:
+      - 9001:9000 # http://localhost:9001
+    environment:
+      MINIO_ACCESS_KEY: dashboard
+      MINIO_SECRET_KEY: dashboard
+    command: server /data
+    volumes:
+      - ~/.docker-volumes/minio:/data # bind local directory to container's minio data directory
+

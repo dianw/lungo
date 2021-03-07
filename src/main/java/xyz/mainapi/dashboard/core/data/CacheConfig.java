@@ -15,16 +15,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableCaching
 public class CacheConfig {
-    @Bean
-    public CacheManager cacheManager() {
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
-        cacheManager.setCaches(createConcurrentMapCaches("user"));
-        return cacheManager;
-    }
-
-    private List<Cache> createConcurrentMapCaches(String... cacheNames) {
-        return Stream.of(cacheNames)
-            .map(ConcurrentMapCache::new)
-            .collect(Collectors.toList());
-    }
 }

@@ -21,8 +21,7 @@ import com.auth0.client.mgmt.filter.LogEventFilter;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.mgmt.logevents.LogEventsPage;
 import com.auth0.json.mgmt.users.User;
-import com.fasterxml.uuid.Generators;
-import com.fasterxml.uuid.impl.TimeBasedGenerator;
+import com.hazelcast.flakeidgen.FlakeIdGenerator;
 
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
@@ -34,16 +33,17 @@ class UserServiceImpl implements UserService {
     private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final TimeBasedGenerator timeBasedGenerator = Generators.timeBasedGenerator();
     private final Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
     private final ManagementAPI managementAPI;
     private final MinioClient minioClient;
     private final MinioConfigProperties minioConfigProperties;
+    private final FlakeIdGenerator flakeIdGenerator;
 
-    public UserServiceImpl(ManagementAPI managementAPI, MinioClient minioClient, MinioConfigProperties minioConfigProperties) {
+    public UserServiceImpl(ManagementAPI managementAPI, MinioClient minioClient, MinioConfigProperties minioConfigProperties, FlakeIdGenerator flakeIdGenerator) {
         this.managementAPI = managementAPI;
         this.minioClient = minioClient;
         this.minioConfigProperties = minioConfigProperties;
+        this.flakeIdGenerator = flakeIdGenerator;
     }
 
     @Override
@@ -76,7 +76,7 @@ class UserServiceImpl implements UserService {
     @CacheEvict(cacheNames = "user", key = "#authentication.name")
     public UserData updateCurrentUserPicture(Authentication authentication, InputStream picture, String contentType, long size) throws Exception {
         String username = encoder.encodeToString(authentication.getName().getBytes(StandardCharsets.UTF_8));
-        String imageObjectName = username + "/" + timeBasedGenerator.generate().toString();
+        String imageObjectName = username + "/" + Long.toHexString(flakeIdGenerator.newId());
 
         // upload picture to S3
         PutObjectArgs putObjectArgs = PutObjectArgs.builder()
