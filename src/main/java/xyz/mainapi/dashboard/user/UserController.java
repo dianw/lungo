@@ -13,15 +13,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import xyz.mainapi.dashboard.core.web.AuthorizedRestController;
 
-@RestController
+@AuthorizedRestController
 @RequestMapping("/api/users/me")
-@ApiResponse(responseCode = "401", description = "Unauthorized")
 @ApiResponse(
     responseCode = "200",
     description = "Success",

@@ -33,6 +33,10 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /api-docs/ui
+    oauth:
+      clientId: REJQoJndB0c2SpzPUcw721BZJuVrwbE5
+      additionalQueryStringParams:
+        audience: https://dashboard.mainapi.xyz/api/v2/
 
 management:
   info:
