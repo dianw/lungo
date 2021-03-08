@@ -3,6 +3,7 @@ package xyz.mainapi.dashboard.core.data;
 import java.time.Instant;
 import java.util.Optional;
 
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -11,8 +12,12 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.domain.Auditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
+@EntityListeners({
+    AuditingEntityListener.class
+})
 public abstract class AuditableEntity implements Auditable<String, Long, Instant> {
     @Id
     @GeneratedValue(generator = "flake")

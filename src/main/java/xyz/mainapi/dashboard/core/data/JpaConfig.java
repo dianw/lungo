@@ -10,12 +10,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import xyz.mainapi.dashboard.Application;
 
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @EnableJpaRepositories(basePackageClasses = Application.class)
+@EnableTransactionManagement
 public class JpaConfig {
     @Bean
     public AuditorAware<String> auditorAware() {
