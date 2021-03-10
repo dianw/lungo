@@ -1,6 +1,19 @@
+######## spring-boot application properties ########
 logging:
   level:
     xyz.mainapi: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: openapi, swaggerui
+  info:
+    git:
+      mode: full
+
+server:
+  forward-headers-strategy: framework
 
 spring:
   datasource:
@@ -37,12 +50,9 @@ springdoc:
       clientId: REJQoJndB0c2SpzPUcw721BZJuVrwbE5
       additionalQueryStringParams:
         audience: https://dashboard.mainapi.xyz/api/v2/
+######## end of spring-boot application properties ########
 
-management:
-  info:
-    git:
-      mode: full
-
+######## custom properties ########
 auth0:
   domain: myapp.us.auth0.com
   client-id: myappclientid
@@ -53,3 +63,10 @@ minio:
   endpoint: https://s3.myapp.com
   access-key: s3accesskey
   secret-key: s3secretkey
+
+openapi:
+  info:
+    title: ${application.name:MainAPI}
+    description: ${application.name:MainAPI} REST API Documentation
+    version: v1
+######## end of custom properties ########
