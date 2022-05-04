@@ -2,7 +2,7 @@
 
 --changeset dianw:0001
 --comment: create app table
-create table mainapi_app (
+create table lungo_app (
   id bigint(20),
   created_by varchar(256) not null,
   created_date datetime not null,
@@ -19,4 +19,4 @@ create table mainapi_app (
   primary key (id),
   key idx_app_name_created_by (app_name, created_by)
 )
---rollback drop table mainapi_app
+--rollback drop table lungo_app

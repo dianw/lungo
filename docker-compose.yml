@@ -2,26 +2,45 @@
 version: '3'
 
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:18.0.0
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: administrator123
+    command: |
+      start-dev
+      --http-port=8081
+      --import-realm
+    ports:
+      - 8081:8081 # http://localhost:8081
+    volumes:
+      - ./.docker-volumes/keycloak/data:/opt/keycloak/data
+      - ./keycloak-realm.json:/opt/keycloak/data/import/realm.json
+
   mariadb:
     image: mariadb
+    environment:
+      MYSQL_DATABASE: lungo
+      MYSQL_USER: lungo
+      MYSQL_PASSWORD: lungo
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
     ports:
       - 3307:3306 # tcp://localhost:3307
-    environment:
-      MYSQL_DATABASE: dashboard
-      MYSQL_USER: dashboard
-      MYSQL_PASSWORD: dashboard
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
     volumes:
-      - ~/.docker-volumes/mysql:/var/lib/mysql # bind local directory to container's mysql data directory
+      - ./.docker-volumes/mysql:/var/lib/mysql # bind local directory to container's mysql data directory
 
   minio:
     image: minio/minio
+    environment:
+      MINIO_ACCESS_KEY: lungo
+      MINIO_SECRET_KEY: lungo
+    command: server /data
     ports:
       - 9001:9000 # http://localhost:9001
-    environment:
-      MINIO_ACCESS_KEY: dashboard
-      MINIO_SECRET_KEY: dashboard
-    command: server /data
     volumes:
-      - ~/.docker-volumes/minio:/data # bind local directory to container's minio data directory
+      - ./.docker-volumes/minio:/data # bind local directory to container's minio data directory
 
+  mailcatcher:
+    image: dockage/mailcatcher:0.7.1
+    ports:
+      - 1080:1080

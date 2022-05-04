@@ -1,7 +1,7 @@
 ######## spring-boot application properties ########
 logging:
   level:
-    xyz.mainapi: INFO
+    org.enkrip.lungo: INFO
 
 management:
   endpoints:
@@ -17,9 +17,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/dashboard
-    username: dashboard
-    password: dashboard
+    url: jdbc:mariadb://localhost:3307/lungo
+    username: lungo
+    password: lungo
     hikari:
       data-source-properties:
         useServerPrepStmts: true
@@ -39,7 +39,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://${auth0.domain}/
+          issuer-uri: http://localhost:8081/realms/lungo
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
 springdoc:
   api-docs:
@@ -47,26 +48,21 @@ springdoc:
   swagger-ui:
     path: /api-docs/ui
     oauth:
-      clientId: REJQoJndB0c2SpzPUcw721BZJuVrwbE5
-      additionalQueryStringParams:
-        audience: https://dashboard.mainapi.xyz/api/v2/
+      clientId: apidocs
+      persistAuthorization: 'true'
+      scopes: openid
+
 ######## end of spring-boot application properties ########
 
 ######## custom properties ########
-auth0:
-  domain: myapp.us.auth0.com
-  client-id: myappclientid
-  client-secret: myappclientsecret
-  management-api-id: https://${auth0.domain}/api/v2/
-
 minio:
-  endpoint: https://s3.myapp.com
-  access-key: s3accesskey
-  secret-key: s3secretkey
+  endpoint: http://localhost:9001
+  access-key: lungo
+  secret-key: lungo
 
 openapi:
   info:
-    title: ${application.name:MainAPI}
-    description: ${application.name:MainAPI} REST API Documentation
+    title: ${application.name:Lungo}
+    description: ${application.name:Lungo} REST API Documentation
     version: v1
 ######## end of custom properties ########
