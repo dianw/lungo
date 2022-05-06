@@ -19,7 +19,7 @@ spring:
   datasource:
     url: jdbc:mariadb://localhost:3307/lungo
     username: lungo
-    password: lungo
+    password: lungo123
     hikari:
       data-source-properties:
         useServerPrepStmts: true
@@ -58,7 +58,7 @@ springdoc:
 minio:
   endpoint: http://localhost:9001
   access-key: lungo
-  secret-key: lungo
+  secret-key: lungo123
 
 openapi:
   info:

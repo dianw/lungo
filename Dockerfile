@@ -1,6 +1,13 @@
-FROM openjdk:8-jdk-alpine
-VOLUME /lungo
-ARG JAR_FILE=*.jar
-ADD target/${JAR_FILE} /lungo/app.jar
-ENV JAVA_OPTS=""
-ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /lungo/app.jar
+FROM eclipse-temurin:11-alpine as build
+WORKDIR /opt/build
+COPY .mvn ./.mvn
+COPY mvnw ./mvnw
+COPY src/ ./src
+COPY pom.xml ./pom.xml
+RUN ./mvnw -DskipTests clean package
+
+FROM eclipse-temurin:11-jre-alpine as prod
+WORKDIR /opt/lungo
+COPY --from=build /opt/build/target/*.jar ./app.jar
+ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
+ENTRYPOINT exec java $JAVA_OPTS -jar ./app.jar
